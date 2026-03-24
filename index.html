@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Cham-potes</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --moss: #3B5323; --moss-light: #5a7a3a; --earth: #6B4C32;
+  --earth-light: #c4a882; --cream: #F5F0E8; --cream-dark: #EDE6D6;
+  --sage-light: #c5dba8; --text-main: #1e1a14; --text-muted: #6b6355;
+  --text-soft: #9a9080; --border: rgba(59,83,35,0.15); --border-strong: rgba(59,83,35,0.28);
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-main); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+.app { max-width: 430px; margin: 0 auto; min-height: 100vh; }
+.nav { display: flex; border-bottom: 1px solid var(--border-strong); background: var(--cream); position: sticky; top: 0; z-index: 10; }
+.nav-btn { flex: 1; padding: 14px 8px; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--text-muted); cursor: pointer; letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 2px solid transparent; transition: all 0.2s; }
+.nav-btn.active { color: var(--moss); border-bottom-color: var(--moss); }
+.screen { display: none; }
+.screen.active { display: block; }
+.hero { padding: 32px 24px 24px; text-align: center; border-bottom: 1px solid var(--border); background: var(--cream-dark); }
+.hero-icon { font-size: 34px; display: block; margin-bottom: 10px; }
+.hero h1 { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 700; color: var(--moss); letter-spacing: -0.01em; margin-bottom: 4px; }
+.hero p { font-size: 13px; color: var(--text-muted); }
+.form-body { padding: 22px; }
+.section-label { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 600; color: var(--moss); margin: 26px 0 14px; padding-bottom: 7px; border-bottom: 1px solid var(--border); }
+.section-label:first-child { margin-top: 0; }
+.field { margin-bottom: 14px; }
+label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+input[type="text"], input[type="number"], select, textarea {
+  width: 100%; padding: 11px 14px; background: white; border: 1px solid var(--border-strong);
+  border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text-main);
+  outline: none; appearance: none; -webkit-appearance: none; transition: border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--moss); }
+textarea { min-height: 72px; resize: vertical; }
+.select-wrap { position: relative; }
+.select-wrap::after { content: '↓'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--moss); pointer-events: none; font-size: 12px; }
+.chip-group { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip { padding: 7px 13px; border: 1px solid var(--border-strong); border-radius: 20px; font-size: 13px; color: var(--text-muted); cursor: pointer; background: white; transition: all 0.2s; user-select: none; }
+.chip.selected { background: var(--moss); color: white; border-color: var(--moss); }
+.check-group { display: flex; flex-direction: column; gap: 8px; }
+.check-label { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; color: var(--text-muted); cursor: pointer; line-height: 1.5; }
+.check-label input[type="checkbox"] { width: auto; margin-top: 2px; flex-shrink: 0; accent-color: var(--moss); }
+.dose-block { background: white; border: 1px solid var(--border-strong); border-radius: 12px; padding: 15px; margin-bottom: 9px; cursor: pointer; transition: all 0.2s; position: relative; }
+.dose-block.selected { border-color: var(--moss); background: #f2f7ee; }
+.dose-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.dose-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 600; color: var(--moss); }
+.dose-amount { font-size: 12px; font-weight: 500; color: var(--earth); background: #f5ede4; padding: 3px 9px; border-radius: 10px; }
+.dose-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 7px; }
+.dose-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+.dose-pill { font-size: 11px; padding: 2px 8px; border-radius: 8px; background: var(--sage-light); color: var(--moss); font-weight: 500; }
+.dose-rec { margin-top: 7px; font-size: 12px; color: var(--earth); font-style: italic; }
+.dose-select-indicator { width: 17px; height: 17px; border-radius: 50%; border: 2px solid var(--border-strong); position: absolute; top: 15px; right: 15px; transition: all 0.2s; }
+.dose-block.selected .dose-select-indicator { background: var(--moss); border-color: var(--moss); }
+.caution-box { background: #f2f7ee; border: 1px solid #a8c98a; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--moss); margin-bottom: 14px; line-height: 1.5; display: none; }
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.submit-btn { width: 100%; padding: 15px; background: var(--moss); color: white; border: none; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 22px; transition: background 0.2s; letter-spacing: 0.03em; }
+.submit-btn:hover { background: var(--moss-light); }
+.submit-btn:disabled { background: var(--text-soft); cursor: not-allowed; }
+.success-screen { padding: 48px 24px; text-align: center; }
+.success-icon { font-size: 52px; display: block; margin-bottom: 18px; }
+.success-screen h2 { font-family: 'Syne', sans-serif; font-size: 24px; color: var(--moss); margin-bottom: 10px; }
+.success-screen p { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+.admin-body { padding: 20px; }
+.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+.stat-card { background: white; border: 1px solid var(--border-strong); border-radius: 12px; padding: 14px; }
+.stat-label { font-size: 11px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.stat-value { font-family: 'Syne', sans-serif; font-size: 26px; color: var(--moss); font-weight: 700; }
+.stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.participant-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 8px; }
+.p-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.p-name { font-weight: 500; font-size: 15px; color: var(--text-main); }
+.p-dose-badge { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 8px; background: #edf4e8; color: var(--moss); }
+.p-details { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.p-detail { font-size: 12px; color: var(--text-muted); }
+.p-detail strong { color: var(--text-main); }
+.p-notes { font-size: 12px; color: var(--earth); margin-top: 6px; background: #fdf6ec; padding: 6px 10px; border-radius: 7px; }
+.p-notes-green { font-size: 12px; color: var(--moss); margin-top: 6px; background: #f2f7ee; padding: 6px 10px; border-radius: 7px; }
+.export-btn { width: 100%; padding: 12px; border: 1px solid var(--moss); background: white; color: var(--moss); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; margin-top: 14px; }
+.admin-login { padding: 48px 24px; text-align: center; }
+.admin-login h2 { font-family: 'Syne', sans-serif; font-size: 22px; color: var(--moss); margin-bottom: 20px; }
+.empty-state { text-align: center; padding: 32px 0; color: var(--text-soft); font-size: 14px; }
+.progress-bar { height: 3px; background: var(--border-strong); border-radius: 2px; margin-bottom: 22px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--moss); border-radius: 2px; transition: width 0.4s ease; }
+.error-msg { color: #c0392b; font-size: 13px; text-align: center; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showScreen('form',this)">Inscription</button>
+    <button class="nav-btn" onclick="showScreen('admin',this)">Organisateur</button>
+  </nav>
+
+  <div id="screen-form" class="screen active">
+    <div id="form-view">
+      <div class="hero">
+        <span class="hero-icon">🍄</span>
+        <h1>Cham-potes</h1>
+        <p>Cercle privé · set & setting sur-mesure</p>
+      </div>
+      <div class="form-body">
+        <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+        <div class="section-label">Qui t'es ?</div>
+        <div class="field">
+          <label>Prénom ou surnom</label>
+          <input type="text" id="f-name" placeholder="Comment t'appeler ?" oninput="updateProgress()">
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label>Âge</label>
+            <input type="number" id="f-age" placeholder="ans" min="18" max="80" oninput="updateDoseRec()">
+          </div>
+          <div class="field">
+            <label>Poids (kg)</label>
+            <input type="number" id="f-weight" placeholder="kg" min="40" max="150">
+          </div>
+        </div>
+
+        <div class="section-label">Ton expérience</div>
+        <div class="field">
+          <label>Expérience psychédélique (truffes, LSD, champi…)</label>
+          <div class="chip-group" id="chips-exp">
+            <span class="chip" onclick="selectChip(this,'exp');updateDoseRec()">Jamais</span>
+            <span class="chip" onclick="selectChip(this,'exp');updateDoseRec()">1 à 3 fois</span>
+            <span class="chip" onclick="selectChip(this,'exp');updateDoseRec()">Régulier</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Détails sur ton expérience (optionnel)</label>
+          <textarea id="f-exp-detail" placeholder="Ex : j'ai fait du LSD deux fois, j'ai trouvé ça intense mais positif…"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Traitements / contre-indications</label>
+          <div class="check-group">
+            <label class="check-label"><input type="checkbox" class="meds-check" value="ISRS / antidépresseurs (Prozac, Zoloft…)"> ISRS / antidépresseurs (Prozac, Zoloft…)</label>
+            <label class="check-label"><input type="checkbox" class="meds-check" value="IMAO (Nardil, Parnate) — interaction sérieuse"> IMAO (Nardil, Parnate) — interaction sérieuse</label>
+            <label class="check-label"><input type="checkbox" class="meds-check" value="Lithium / stabilisateurs de l'humeur"> Lithium / stabilisateurs de l'humeur</label>
+            <label class="check-label"><input type="checkbox" class="meds-check" value="Antipsychotiques / neuroleptiques"> Antipsychotiques / neuroleptiques</label>
+            <label class="check-label"><input type="checkbox" class="meds-check" value="Anxiolytiques / benzodiazépines"> Anxiolytiques / benzodiazépines</label>
+            <label class="check-label"><input type="checkbox" class="meds-check" value="Antécédents psy (psychose, bipolarité…)"> Antécédents psy (psychose, bipolarité…)</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Précisions médicales (optionnel)</label>
+          <textarea id="f-meds-detail" placeholder="Si tu veux préciser un traitement ou une situation particulière…"></textarea>
+        </div>
+
+        <div class="section-label">Set & Setting</div>
+        <div class="field">
+          <label>Intention principale</label>
+          <div class="chip-group" id="chips-intention">
+            <span class="chip" onclick="selectChip(this,'intention')">Introspection</span>
+            <span class="chip" onclick="selectChip(this,'intention')">Connexion</span>
+            <span class="chip" onclick="selectChip(this,'intention')">Créativité</span>
+            <span class="chip" onclick="selectChip(this,'intention')">Détente / plaisir</span>
+            <span class="chip" onclick="selectChip(this,'intention')">Deuil / guérison</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Ce que tu veux explorer (optionnel)</label>
+          <textarea id="f-intention-text" placeholder="Quelques mots sur ce que tu aimerais travailler…"></textarea>
+        </div>
+        <div class="field">
+          <label>Environnement préféré</label>
+          <div class="chip-group" id="chips-env">
+            <span class="chip" onclick="selectChip(this,'env')">Pleine nature</span>
+            <span class="chip" onclick="selectChip(this,'env')">Intérieur cosy</span>
+            <span class="chip" onclick="selectChip(this,'env')">Peu importe</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Précisions sur l'environnement (optionnel)</label>
+          <textarea id="f-env-detail" placeholder="Ex : j'ai besoin de pouvoir m'isoler, j'aime être près de l'eau…"></textarea>
+        </div>
+        <div class="field">
+          <label>Ambiance sonore</label>
+          <div class="chip-group" id="chips-sound">
+            <span class="chip" onclick="selectChip(this,'sound')">Musique ambient</span>
+            <span class="chip" onclick="selectChip(this,'sound')">Sons naturels</span>
+            <span class="chip" onclick="selectChip(this,'sound')">Silence</span>
+            <span class="chip" onclick="selectChip(this,'sound')">Au choix du groupe</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Précisions sur le son (optionnel)</label>
+          <textarea id="f-sound-detail" placeholder="Ex : j'adore Bonobo, j'aime pas la techno…"></textarea>
+        </div>
+        <div class="field">
+          <label>Niveau d'accompagnement souhaité</label>
+          <div class="chip-group" id="chips-guide">
+            <span class="chip" onclick="selectChip(this,'guide')">Guide présent et actif</span>
+            <span class="chip" onclick="selectChip(this,'guide')">Disponible si besoin</span>
+            <span class="chip" onclick="selectChip(this,'guide')">Autonomie totale</span>
+          </div>
+        </div>
+
+        <div class="section-label">Dosage</div>
+        <div class="caution-box" id="dose-rec-box"><span id="dose-rec-text"></span></div>
+
+        <div class="dose-block" onclick="selectDose(this,'mini')">
+          <div class="dose-select-indicator"></div>
+          <div class="dose-header"><span class="dose-name">Mini-dose</span><span class="dose-amount">0.5 – 1 g</span></div>
+          <div class="dose-desc">Effets subtils et doux. Les couleurs s'intensifient, l'humeur s'élève nettement, la musique devient plus riche. La pensée reste claire mais plus associative et créative. Légère déréalisation possible.</div>
+          <div class="dose-pills"><span class="dose-pill">Durée 4–5h</span><span class="dose-pill">Légère altération</span><span class="dose-pill">Idéal débutants</span></div>
+        </div>
+
+        <div class="dose-block" onclick="selectDose(this,'modere')">
+          <div class="dose-select-indicator"></div>
+          <div class="dose-header"><span class="dose-name">Dose modérée</span><span class="dose-amount">1.5 – 2.5 g</span></div>
+          <div class="dose-desc">Expérience psychédélique franche. Distorsions visuelles, synesthésie, pensée profondément non-linéaire. Puissante connexion émotionnelle — peut faire remonter des émotions enfouies. Ego légèrement dissous par moments. Le set & setting devient crucial.</div>
+          <div class="dose-pills"><span class="dose-pill">Durée 5–6h</span><span class="dose-pill">Visuels nets</span><span class="dose-pill">Introspection forte</span><span class="dose-pill">Expérience conseillée</span></div>
+        </div>
+
+        <div class="dose-block" onclick="selectDose(this,'fort')">
+          <div class="dose-select-indicator"></div>
+          <div class="dose-header"><span class="dose-name">Dose forte</span><span class="dose-amount">3 – 4 g</span></div>
+          <div class="dose-desc">Dissolution partielle de l'ego. Les frontières entre soi et le monde s'estompent. Hallucinations visuelles immersives, insights profonds ou confrontation à des peurs non résolues. Expérience potentiellement transformatrice — nécessite une solide préparation mentale.</div>
+          <div class="dose-pills"><span class="dose-pill">Durée 6–8h</span><span class="dose-pill">Ego dissolution</span><span class="dose-pill">Réservé expérimentés</span></div>
+        </div>
+
+        <div class="dose-block" onclick="selectDose(this,'heroique')">
+          <div class="dose-select-indicator"></div>
+          <div class="dose-header"><span class="dose-name">Dose héroïque</span><span class="dose-amount">4.5 g +</span></div>
+          <div class="dose-desc">Territoire de dissolution totale de l'ego. L'expérience ordinaire du "moi" disparaît. Rencontres avec le sacré, mort symbolique, union mystique — certains la décrivent comme l'expérience la plus significative de leur vie. Guide obligatoire.</div>
+          <div class="dose-pills"><span class="dose-pill">Durée 7–10h</span><span class="dose-pill">Dissolution totale</span><span class="dose-pill">Guide obligatoire</span></div>
+          <div class="dose-rec" id="heroique-warning" style="display:none">⚠ Tu seras contacté avant validation de ce choix.</div>
+        </div>
+
+        <div class="section-label">Budget & contact</div>
+        <div class="field">
+          <label>Budget max (€ / pers)</label>
+          <input type="number" id="f-budget" placeholder="€" min="20" oninput="updateProgress()">
+        </div>
+        <div class="field">
+          <label>Régime alimentaire</label>
+          <div class="select-wrap">
+            <select id="f-diet">
+              <option value="">Standard</option>
+              <option>Végétarien</option>
+              <option>Vegan</option>
+              <option>Allergie gluten</option>
+              <option>Autre allergie</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label>Contact d'urgence (prénom + téléphone)</label>
+          <input type="text" id="f-emergency" placeholder="Ex : Marie · 06 12 34 56 78">
+        </div>
+        <div class="field">
+          <label>Notes pour l'organisateur (optionnel)</label>
+          <textarea id="f-notes" placeholder="Craintes, besoins spécifiques, question particulière…"></textarea>
+        </div>
+
+        <button class="submit-btn" id="submit-btn" onclick="submitForm()">Valider les informations →</button>
+        <div class="error-msg" id="form-error" style="display:none"></div>
+      </div>
+    </div>
+
+    <div id="success-view" style="display:none">
+      <div class="success-screen">
+        <span class="success-icon">🌿</span>
+        <h2>C'est bon !</h2>
+        <p>Tes infos sont bien enregistrées.<br>L'organisateur te contactera pour finaliser les détails.</p>
+        <button class="submit-btn" style="margin-top:28px;max-width:200px;margin-left:auto;margin-right:auto;display:block" onclick="resetForm()">Nouvelle inscription</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-admin" class="screen">
+    <div id="admin-login-view">
+      <div class="admin-login">
+        <span style="font-size:32px;display:block;margin-bottom:16px">🔒</span>
+        <h2>Espace organisateur</h2>
+        <input type="password" id="admin-pw" placeholder="Mot de passe" style="margin-bottom:12px">
+        <button class="submit-btn" onclick="adminLogin()">Accéder</button>
+        <div class="error-msg" id="admin-error" style="display:none">Mot de passe incorrect</div>
+      </div>
+    </div>
+    <div id="admin-dash" style="display:none">
+      <div class="admin-body">
+        <div style="font-family:'Syne',sans-serif;font-size:20px;color:var(--moss);margin-bottom:16px;padding-top:4px;font-weight:700">Vue d'ensemble</div>
+        <div class="stats-row" id="stats-row"></div>
+        <div id="participants-list"></div>
+        <button class="export-btn" onclick="exportCSV()">Exporter CSV →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ADMIN_PASSWORD = 'champotes2024';
+let selectedDose = null;
+let chipSelections = {};
+let allParticipants = [];
+
+function showScreen(id, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function selectChip(el, group) {
+  document.querySelectorAll('#chips-' + group + ' .chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  chipSelections[group] = el.textContent;
+  updateProgress();
+}
+
+function selectDose(el, dose) {
+  document.querySelectorAll('.dose-block').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedDose = dose;
+  document.getElementById('heroique-warning').style.display = dose === 'heroique' ? 'block' : 'none';
+  updateProgress();
+}
+
+function updateDoseRec() {
+  const exp = chipSelections['exp'] || '';
+  const box = document.getElementById('dose-rec-box');
+  if (!exp) { box.style.display = 'none'; return; }
+  const msgs = {
+    'Jamais': '🌱 Première fois ? On te recommande la mini-dose (0.5–1g) — assez pour ressentir quelque chose de beau, sans être submergé(e).',
+    '1 à 3 fois': '🌿 Avec quelques expériences, la dose modérée (1.5–2.5g) est souvent le sweet spot — un vrai voyage, mais gérable.',
+    'Régulier': '🍄 Tu connais ton espace intérieur. Choisis ce qui résonne juste pour toi ce jour-là.'
+  };
+  document.getElementById('dose-rec-text').textContent = msgs[exp] || '';
+  box.style.display = 'block';
+}
+
+function updateProgress() {
+  const filled = [
+    document.getElementById('f-name').value,
+    selectedDose,
+    document.getElementById('f-budget').value,
+    chipSelections['exp'],
+    chipSelections['intention']
+  ].filter(Boolean).length;
+  document.getElementById('progress').style.width = Math.min(100, filled / 5 * 100) + '%';
+}
+
+function getMeds() {
+  return Array.from(document.querySelectorAll('.meds-check:checked')).map(c => c.value);
+}
+
+async function submitForm() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name || !selectedDose) {
+    showFormError('Merci de remplir au minimum ton prénom et choisir un dosage.');
+    return;
+  }
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Envoi en cours…';
+
+  const entry = {
+    name,
+    age: parseInt(document.getElementById('f-age').value) || null,
+    weight: parseInt(document.getElementById('f-weight').value) || null,
+    exp: chipSelections['exp'] || null,
+    exp_detail: document.getElementById('f-exp-detail').value || null,
+    meds: getMeds(),
+    meds_detail: document.getElementById('f-meds-detail').value || null,
+    dose: selectedDose,
+    budget: parseInt(document.getElementById('f-budget').value) || null,
+    intention: chipSelections['intention'] || null,
+    intention_text: document.getElementById('f-intention-text').value || null,
+    env: chipSelections['env'] || null,
+    env_detail: document.getElementById('f-env-detail').value || null,
+    sound: chipSelections['sound'] || null,
+    sound_detail: document.getElementById('f-sound-detail').value || null,
+    guide: chipSelections['guide'] || null,
+    diet: document.getElementById('f-diet').value || null,
+    emergency: document.getElementById('f-emergency').value || null,
+    notes: document.getElementById('f-notes').value || null
+  };
+
+  try {
+    const res = await fetch('/api/handler', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry)
+    });
+    if (!res.ok) throw new Error('Erreur serveur');
+    document.getElementById('form-view').style.display = 'none';
+    document.getElementById('success-view').style.display = 'block';
+  } catch (e) {
+    showFormError('Erreur lors de l\'envoi. Réessaie dans un instant.');
+    btn.disabled = false;
+    btn.textContent = 'Valider les informations →';
+  }
+}
+
+function showFormError(msg) {
+  const el = document.getElementById('form-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 4000);
+}
+
+function resetForm() {
+  document.getElementById('form-view').style.display = 'block';
+  document.getElementById('success-view').style.display = 'none';
+  document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(i => i.value = '');
+  document.getElementById('f-diet').value = '';
+  document.querySelectorAll('.meds-check').forEach(c => c.checked = false);
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.dose-block').forEach(d => d.classList.remove('selected'));
+  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('submit-btn').textContent = 'Valider les informations →';
+  selectedDose = null;
+  chipSelections = {};
+  document.getElementById('dose-rec-box').style.display = 'none';
+  document.getElementById('progress').style.width = '0%';
+}
+
+async function adminLogin() {
+  const pw = document.getElementById('admin-pw').value;
+  if (pw !== ADMIN_PASSWORD) {
+    document.getElementById('admin-error').style.display = 'block';
+    return;
+  }
+  document.getElementById('admin-login-view').style.display = 'none';
+  document.getElementById('admin-dash').style.display = 'block';
+  await loadParticipants(pw);
+}
+
+async function loadParticipants(pw) {
+  try {
+    const res = await fetch('/api/handler', {
+      headers: { 'x-admin-password': pw || ADMIN_PASSWORD }
+    });
+    allParticipants = await res.json();
+    renderDashboard();
+  } catch (e) {
+    document.getElementById('participants-list').innerHTML = '<div class="empty-state">Erreur de chargement.</div>';
+  }
+}
+
+const DOSE_LABELS = { mini: 'Mini-dose (0.5–1g)', modere: 'Modérée (1.5–2.5g)', fort: 'Forte (3–4g)', heroique: 'Héroïque (4.5g+)' };
+
+function renderDashboard() {
+  const total = allParticipants.length;
+  const meds = allParticipants.filter(p => p.meds && p.meds.length > 0).length;
+  const heroic = allParticipants.filter(p => p.dose === 'heroique').length;
+  const budgets = allParticipants.filter(p => p.budget).map(p => p.budget);
+  const avgBudget = budgets.length ? Math.round(budgets.reduce((a, b) => a + b, 0) / budgets.length) : 0;
+
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Inscrits</div><div class="stat-value">${total}</div><div class="stat-sub">participants</div></div>
+    <div class="stat-card"><div class="stat-label">Budget moy.</div><div class="stat-value">${avgBudget}€</div><div class="stat-sub">${meds > 0 ? '⚠ '+meds+' traitement(s)' : 'Aucune alerte médicale'}</div></div>`;
+
+  if (total === 0) { document.getElementById('participants-list').innerHTML = '<div class="empty-state">Aucune inscription pour l\'instant.</div>'; return; }
+
+  let html = '';
+  allParticipants.forEach(p => {
+    const date = p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '–';
+    html += `<div class="participant-card">
+      <div class="p-header"><div class="p-name">${p.name}</div><div class="p-dose-badge">${DOSE_LABELS[p.dose] || p.dose}</div></div>
+      <div class="p-details">
+        <div class="p-detail">Âge : <strong>${p.age || '–'}</strong></div>
+        <div class="p-detail">Poids : <strong>${p.weight ? p.weight+' kg' : '–'}</strong></div>
+        <div class="p-detail">Expérience : <strong>${p.exp || '–'}</strong></div>
+        <div class="p-detail">Budget : <strong>${p.budget ? p.budget+'€' : '–'}</strong></div>
+        <div class="p-detail">Intention : <strong>${p.intention || '–'}</strong></div>
+        <div class="p-detail">Guide : <strong>${p.guide || '–'}</strong></div>
+        <div class="p-detail">Env : <strong>${p.env || '–'}</strong></div>
+        <div class="p-detail">Régime : <strong>${p.diet || 'Standard'}</strong></div>
+      </div>
+      ${p.meds && p.meds.length > 0 ? '<div class="p-notes">⚠ Traitements : '+p.meds.join(', ')+(p.meds_detail ? ' — '+p.meds_detail : '')+'</div>' : ''}
+      ${p.exp_detail ? '<div class="p-notes-green">Expérience : '+p.exp_detail+'</div>' : ''}
+      ${p.intention_text ? '<div class="p-notes-green">'+p.intention_text+'</div>' : ''}
+      ${p.notes ? '<div class="p-notes">'+p.notes+'</div>' : ''}
+      <div class="p-detail" style="margin-top:8px;font-size:11px;color:var(--text-soft)">Urgence : ${p.emergency || '–'} · ${date}</div>
+    </div>`;
+  });
+  document.getElementById('participants-list').innerHTML = html;
+}
+
+function exportCSV() {
+  if (!allParticipants.length) { alert('Aucune donnée à exporter.'); return; }
+  const h = ['Date','Prénom','Âge','Poids','Expérience','Détail exp','Traitements','Détail médical','Dosage','Budget','Intention','Détail intention','Env','Son','Guide','Régime','Urgence','Notes'];
+  const rows = allParticipants.map(p => [
+    p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '',
+    p.name, p.age, p.weight, p.exp,
+    (p.exp_detail||'').replace(/,/g,';'),
+    (p.meds||[]).join(' | '),
+    (p.meds_detail||'').replace(/,/g,';'),
+    DOSE_LABELS[p.dose]||p.dose, p.budget,
+    p.intention, (p.intention_text||'').replace(/,/g,';'),
+    p.env, p.sound, p.guide, p.diet, p.emergency,
+    (p.notes||'').replace(/,/g,';')
+  ]);
+  const csv = [h,...rows].map(r=>r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));
+  a.download = 'champotes_inscrits.csv';
+  a.click();
+}
+</script>
+</body>
+</html>
