@@ -44,6 +44,11 @@ textarea { min-height: 72px; resize: vertical; }
 .check-group { display: flex; flex-direction: column; gap: 8px; }
 .check-label { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; color: var(--text-muted); cursor: pointer; line-height: 1.5; }
 .check-label input[type="checkbox"] { width: auto; margin-top: 2px; flex-shrink: 0; accent-color: var(--moss); }
+/* Substance toggle */
+.substance-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
+.sub-btn { flex: 1; padding: 10px 8px; border: 1px solid var(--border-strong); border-radius: 10px; background: white; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; font-weight: 500; }
+.sub-btn.active { background: var(--moss); color: white; border-color: var(--moss); }
+/* Dose blocks */
 .dose-block { background: white; border: 1px solid var(--border-strong); border-radius: 12px; padding: 15px; margin-bottom: 9px; cursor: pointer; transition: all 0.2s; position: relative; }
 .dose-block.selected { border-color: var(--moss); background: #f2f7ee; }
 .dose-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
@@ -100,7 +105,7 @@ textarea { min-height: 72px; resize: vertical; }
       <div class="hero">
         <span class="hero-icon">🍄</span>
         <h1>Cham-potes</h1>
-        <p>Cercle privé · set & setting sur-mesure</p>
+        <p>Entre potes · en conscience 🌿</p>
       </div>
       <div class="form-body">
         <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
@@ -127,12 +132,12 @@ textarea { min-height: 72px; resize: vertical; }
           <div class="chip-group" id="chips-exp">
             <span class="chip" onclick="selectChip(this,'exp');updateDoseRec()">Jamais</span>
             <span class="chip" onclick="selectChip(this,'exp');updateDoseRec()">1 à 3 fois</span>
-            <span class="chip" onclick="selectChip(this,'exp');updateDoseRec()">Régulier</span>
+            <span class="chip" onclick="selectChip(this,'exp');updateDoseRec()">5 à 10 fois</span>
           </div>
         </div>
         <div class="field">
           <label>Détails sur ton expérience (optionnel)</label>
-          <textarea id="f-exp-detail" placeholder="Ex : j'ai fait du LSD deux fois, j'ai trouvé ça intense mais positif…"></textarea>
+          <textarea id="f-exp-detail" placeholder=""></textarea>
         </div>
 
         <div class="field">
@@ -148,88 +153,128 @@ textarea { min-height: 72px; resize: vertical; }
         </div>
         <div class="field">
           <label>Précisions médicales (optionnel)</label>
-          <textarea id="f-meds-detail" placeholder="Si tu veux préciser un traitement ou une situation particulière…"></textarea>
+          <textarea id="f-meds-detail" placeholder=""></textarea>
         </div>
 
         <div class="section-label">Set & Setting</div>
         <div class="field">
-          <label>Intention principale</label>
+          <label>Intention <span style="font-size:11px;color:var(--text-soft);text-transform:none;letter-spacing:0">(plusieurs choix possibles)</span></label>
           <div class="chip-group" id="chips-intention">
-            <span class="chip" onclick="selectChip(this,'intention')">Introspection</span>
-            <span class="chip" onclick="selectChip(this,'intention')">Connexion</span>
-            <span class="chip" onclick="selectChip(this,'intention')">Créativité</span>
-            <span class="chip" onclick="selectChip(this,'intention')">Détente / plaisir</span>
-            <span class="chip" onclick="selectChip(this,'intention')">Deuil / guérison</span>
+            <span class="chip" onclick="toggleChip(this,'intention')">Introspection</span>
+            <span class="chip" onclick="toggleChip(this,'intention')">Connexion</span>
+            <span class="chip" onclick="toggleChip(this,'intention')">Créativité</span>
+            <span class="chip" onclick="toggleChip(this,'intention')">Détente / plaisir</span>
           </div>
         </div>
         <div class="field">
           <label>Ce que tu veux explorer (optionnel)</label>
-          <textarea id="f-intention-text" placeholder="Quelques mots sur ce que tu aimerais travailler…"></textarea>
+          <textarea id="f-intention-text" placeholder=""></textarea>
         </div>
         <div class="field">
-          <label>Environnement préféré</label>
+          <label>Environnement préféré <span style="font-size:11px;color:var(--text-soft);text-transform:none;letter-spacing:0">(plusieurs choix possibles)</span></label>
           <div class="chip-group" id="chips-env">
-            <span class="chip" onclick="selectChip(this,'env')">Pleine nature</span>
-            <span class="chip" onclick="selectChip(this,'env')">Intérieur cosy</span>
-            <span class="chip" onclick="selectChip(this,'env')">Peu importe</span>
+            <span class="chip" onclick="toggleChip(this,'env')">Pleine nature</span>
+            <span class="chip" onclick="toggleChip(this,'env')">Intérieur cosy</span>
+            <span class="chip" onclick="toggleChip(this,'env')">Peu importe</span>
           </div>
         </div>
         <div class="field">
           <label>Précisions sur l'environnement (optionnel)</label>
-          <textarea id="f-env-detail" placeholder="Ex : j'ai besoin de pouvoir m'isoler, j'aime être près de l'eau…"></textarea>
+          <textarea id="f-env-detail" placeholder=""></textarea>
         </div>
         <div class="field">
-          <label>Ambiance sonore</label>
+          <label>Ambiance sonore <span style="font-size:11px;color:var(--text-soft);text-transform:none;letter-spacing:0">(plusieurs choix possibles)</span></label>
           <div class="chip-group" id="chips-sound">
-            <span class="chip" onclick="selectChip(this,'sound')">Musique ambient</span>
-            <span class="chip" onclick="selectChip(this,'sound')">Sons naturels</span>
-            <span class="chip" onclick="selectChip(this,'sound')">Silence</span>
-            <span class="chip" onclick="selectChip(this,'sound')">Au choix du groupe</span>
+            <span class="chip" onclick="toggleChip(this,'sound')">Musique ambient</span>
+            <span class="chip" onclick="toggleChip(this,'sound')">Sons naturels</span>
+            <span class="chip" onclick="toggleChip(this,'sound')">Silence</span>
+            <span class="chip" onclick="toggleChip(this,'sound')">Au choix du groupe</span>
           </div>
         </div>
         <div class="field">
-          <label>Précisions sur le son (optionnel)</label>
-          <textarea id="f-sound-detail" placeholder="Ex : j'adore Bonobo, j'aime pas la techno…"></textarea>
+          <label>Proposition de son (optionnel)</label>
+          <textarea id="f-sound-detail" placeholder="Proposition de style, lien de playlist, exemple de sons…"></textarea>
         </div>
         <div class="field">
-          <label>Niveau d'accompagnement souhaité</label>
+          <label>Niveau d'accompagnement souhaité <span style="font-size:11px;color:var(--text-soft);text-transform:none;letter-spacing:0">(plusieurs choix possibles)</span></label>
           <div class="chip-group" id="chips-guide">
-            <span class="chip" onclick="selectChip(this,'guide')">Guide présent et actif</span>
-            <span class="chip" onclick="selectChip(this,'guide')">Disponible si besoin</span>
-            <span class="chip" onclick="selectChip(this,'guide')">Autonomie totale</span>
+            <span class="chip" onclick="toggleChip(this,'guide')">Guide présent et actif</span>
+            <span class="chip" onclick="toggleChip(this,'guide')">Disponible si besoin</span>
+            <span class="chip" onclick="toggleChip(this,'guide')">Autonomie totale</span>
           </div>
         </div>
 
         <div class="section-label">Dosage</div>
         <div class="caution-box" id="dose-rec-box"><span id="dose-rec-text"></span></div>
 
-        <div class="dose-block" onclick="selectDose(this,'mini')">
-          <div class="dose-select-indicator"></div>
-          <div class="dose-header"><span class="dose-name">Mini-dose</span><span class="dose-amount">0.5 – 1 g</span></div>
-          <div class="dose-desc">Effets subtils et doux. Les couleurs s'intensifient, l'humeur s'élève nettement, la musique devient plus riche. La pensée reste claire mais plus associative et créative. Légère déréalisation possible.</div>
-          <div class="dose-pills"><span class="dose-pill">Durée 4–5h</span><span class="dose-pill">Légère altération</span><span class="dose-pill">Idéal débutants</span></div>
+        <!-- Toggle champi / truffes -->
+        <div class="substance-toggle">
+          <button class="sub-btn active" id="btn-champi" onclick="switchSubstance('champi')">🍄 Champignons séchés</button>
+          <button class="sub-btn" id="btn-truffe" onclick="switchSubstance('truffe')">🌰 Truffes magiques</button>
         </div>
 
-        <div class="dose-block" onclick="selectDose(this,'modere')">
-          <div class="dose-select-indicator"></div>
-          <div class="dose-header"><span class="dose-name">Dose modérée</span><span class="dose-amount">1.5 – 2.5 g</span></div>
-          <div class="dose-desc">Expérience psychédélique franche. Distorsions visuelles, synesthésie, pensée profondément non-linéaire. Puissante connexion émotionnelle — peut faire remonter des émotions enfouies. Ego légèrement dissous par moments. Le set & setting devient crucial.</div>
-          <div class="dose-pills"><span class="dose-pill">Durée 5–6h</span><span class="dose-pill">Visuels nets</span><span class="dose-pill">Introspection forte</span><span class="dose-pill">Expérience conseillée</span></div>
+        <!-- Doses champignons séchés -->
+        <div id="doses-champi">
+          <div class="dose-block" onclick="selectDose(this,'champi_leger')">
+            <div class="dose-select-indicator"></div>
+            <div class="dose-header"><span class="dose-name">Légère</span><span class="dose-amount">1 – 1.5 g</span></div>
+            <div class="dose-desc">Effets subtils et doux. Les couleurs s'intensifient, l'humeur s'élève nettement, la musique devient plus riche. La pensée reste claire mais plus associative et créative. Légère déréalisation possible.</div>
+            <div class="dose-pills"><span class="dose-pill">Durée 4–5h</span><span class="dose-pill">Légère altération</span><span class="dose-pill">Idéal débutants</span></div>
+          </div>
+
+          <div class="dose-block" onclick="selectDose(this,'champi_modere')">
+            <div class="dose-select-indicator"></div>
+            <div class="dose-header"><span class="dose-name">Modérée</span><span class="dose-amount">2 – 2.5 g</span></div>
+            <div class="dose-desc">Expérience psychédélique franche. Distorsions visuelles, synesthésie, pensée profondément non-linéaire. Puissante connexion émotionnelle. Le set & setting devient crucial.</div>
+            <div class="dose-pills"><span class="dose-pill">Durée 5–6h</span><span class="dose-pill">Visuels nets</span><span class="dose-pill">Introspection forte</span><span class="dose-pill">Expérience conseillée</span></div>
+          </div>
+
+          <div class="dose-block" onclick="selectDose(this,'champi_fort')">
+            <div class="dose-select-indicator"></div>
+            <div class="dose-header"><span class="dose-name">Forte</span><span class="dose-amount">3 – 3.5 g</span></div>
+            <div class="dose-desc">Dissolution partielle de l'ego. Les frontières entre soi et le monde s'estompent. Hallucinations visuelles immersives, insights profonds. Expérience potentiellement transformatrice — nécessite une solide préparation mentale.</div>
+            <div class="dose-pills"><span class="dose-pill">Durée 6–8h</span><span class="dose-pill">Ego dissolution</span><span class="dose-pill">Réservé expérimentés</span></div>
+          </div>
+
+          <div class="dose-block" onclick="selectDose(this,'champi_heroique')">
+            <div class="dose-select-indicator"></div>
+            <div class="dose-header"><span class="dose-name">Héroïque</span><span class="dose-amount">4.5 g +</span></div>
+            <div class="dose-desc">Territoire de dissolution totale de l'ego. L'expérience ordinaire du "moi" disparaît. Rencontres avec le sacré, mort symbolique, union mystique. Guide obligatoire.</div>
+            <div class="dose-pills"><span class="dose-pill">Durée 7–10h</span><span class="dose-pill">Dissolution totale</span><span class="dose-pill">Guide obligatoire</span></div>
+            <div class="dose-rec" id="heroique-warning" style="display:none">⚠ Tu seras contacté avant validation de ce choix.</div>
+          </div>
         </div>
 
-        <div class="dose-block" onclick="selectDose(this,'fort')">
-          <div class="dose-select-indicator"></div>
-          <div class="dose-header"><span class="dose-name">Dose forte</span><span class="dose-amount">3 – 4 g</span></div>
-          <div class="dose-desc">Dissolution partielle de l'ego. Les frontières entre soi et le monde s'estompent. Hallucinations visuelles immersives, insights profonds ou confrontation à des peurs non résolues. Expérience potentiellement transformatrice — nécessite une solide préparation mentale.</div>
-          <div class="dose-pills"><span class="dose-pill">Durée 6–8h</span><span class="dose-pill">Ego dissolution</span><span class="dose-pill">Réservé expérimentés</span></div>
-        </div>
+        <!-- Doses truffes magiques -->
+        <div id="doses-truffe" style="display:none">
+          <div class="dose-block" onclick="selectDose(this,'truffe_leger')">
+            <div class="dose-select-indicator"></div>
+            <div class="dose-header"><span class="dose-name">Légère</span><span class="dose-amount">5 – 8 g</span></div>
+            <div class="dose-desc">Entrée en douceur. L'humeur se réchauffe, les sens s'éveillent, les rires viennent facilement. Légère ouverture de la perception sans bouleversement. Idéal pour une première fois avec les truffes.</div>
+            <div class="dose-pills"><span class="dose-pill">Durée 3–4h</span><span class="dose-pill">Légère altération</span><span class="dose-pill">Idéal débutants</span></div>
+          </div>
 
-        <div class="dose-block" onclick="selectDose(this,'heroique')">
-          <div class="dose-select-indicator"></div>
-          <div class="dose-header"><span class="dose-name">Dose héroïque</span><span class="dose-amount">4.5 g +</span></div>
-          <div class="dose-desc">Territoire de dissolution totale de l'ego. L'expérience ordinaire du "moi" disparaît. Rencontres avec le sacré, mort symbolique, union mystique — certains la décrivent comme l'expérience la plus significative de leur vie. Guide obligatoire.</div>
-          <div class="dose-pills"><span class="dose-pill">Durée 7–10h</span><span class="dose-pill">Dissolution totale</span><span class="dose-pill">Guide obligatoire</span></div>
-          <div class="dose-rec" id="heroique-warning" style="display:none">⚠ Tu seras contacté avant validation de ce choix.</div>
+          <div class="dose-block" onclick="selectDose(this,'truffe_modere')">
+            <div class="dose-select-indicator"></div>
+            <div class="dose-header"><span class="dose-name">Modérée</span><span class="dose-amount">10 – 15 g</span></div>
+            <div class="dose-desc">Expérience psychédélique claire et maîtrisable. Visuels présents, pensée non-linéaire, connexion émotionnelle forte. Le sweet spot pour la plupart — un vrai voyage, avec un retour accessible.</div>
+            <div class="dose-pills"><span class="dose-pill">Durée 4–5h</span><span class="dose-pill">Visuels présents</span><span class="dose-pill">Introspection forte</span><span class="dose-pill">Expérience conseillée</span></div>
+          </div>
+
+          <div class="dose-block" onclick="selectDose(this,'truffe_fort')">
+            <div class="dose-select-indicator"></div>
+            <div class="dose-header"><span class="dose-name">Forte</span><span class="dose-amount">16 – 20 g</span></div>
+            <div class="dose-desc">Dissolution partielle de l'ego. Les frontières entre soi et le monde s'estompent. Hallucinations immersives, insights profonds. Nécessite une préparation mentale solide et un cadre sécurisé.</div>
+            <div class="dose-pills"><span class="dose-pill">Durée 5–6h</span><span class="dose-pill">Ego dissolution</span><span class="dose-pill">Réservé expérimentés</span></div>
+          </div>
+
+          <div class="dose-block" onclick="selectDose(this,'truffe_heroique')">
+            <div class="dose-select-indicator"></div>
+            <div class="dose-header"><span class="dose-name">Héroïque</span><span class="dose-amount">22 g +</span></div>
+            <div class="dose-desc">Dissolution totale de l'ego. L'expérience ordinaire du "moi" disparaît. Rencontres avec le sacré, mort symbolique, union mystique. Guide obligatoire — expérience à ne pas prendre à la légère.</div>
+            <div class="dose-pills"><span class="dose-pill">Durée 6–8h</span><span class="dose-pill">Dissolution totale</span><span class="dose-pill">Guide obligatoire</span></div>
+            <div class="dose-rec" id="heroique-truffe-warning" style="display:none">⚠ Tu seras contacté avant validation de ce choix.</div>
+          </div>
         </div>
 
         <div class="section-label">Budget & contact</div>
@@ -255,7 +300,7 @@ textarea { min-height: 72px; resize: vertical; }
         </div>
         <div class="field">
           <label>Notes pour l'organisateur (optionnel)</label>
-          <textarea id="f-notes" placeholder="Craintes, besoins spécifiques, question particulière…"></textarea>
+          <textarea id="f-notes" placeholder=""></textarea>
         </div>
 
         <button class="submit-btn" id="submit-btn" onclick="submitForm()">Valider les informations →</button>
@@ -296,8 +341,12 @@ textarea { min-height: 72px; resize: vertical; }
 
 <script>
 let selectedDose = null;
+let selectedSubstance = 'champi';
+// chipSelections: string pour single-select (exp), array pour multi-select
 let chipSelections = {};
 let allParticipants = [];
+
+const MULTI_SELECT_GROUPS = ['intention', 'env', 'sound', 'guide'];
 
 function showScreen(id, btn) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -306,18 +355,44 @@ function showScreen(id, btn) {
   if (btn) btn.classList.add('active');
 }
 
+// Single-select (ex: expérience)
 function selectChip(el, group) {
   document.querySelectorAll('#chips-' + group + ' .chip').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
-  chipSelections[group] = el.textContent;
+  chipSelections[group] = el.textContent.trim();
   updateProgress();
+}
+
+// Multi-select (intention, env, son, guide)
+function toggleChip(el, group) {
+  el.classList.toggle('selected');
+  const selected = Array.from(document.querySelectorAll('#chips-' + group + ' .chip.selected')).map(c => c.textContent.trim());
+  chipSelections[group] = selected;
+  updateProgress();
+}
+
+function switchSubstance(type) {
+  selectedSubstance = type;
+  // Reset dose si elle appartient à l'autre substance
+  if (selectedDose && !selectedDose.startsWith(type + '_')) {
+    document.querySelectorAll('.dose-block').forEach(d => d.classList.remove('selected'));
+    selectedDose = null;
+    document.getElementById('heroique-warning').style.display = 'none';
+    document.getElementById('heroique-truffe-warning').style.display = 'none';
+    updateProgress();
+  }
+  document.getElementById('doses-champi').style.display = type === 'champi' ? 'block' : 'none';
+  document.getElementById('doses-truffe').style.display = type === 'truffe' ? 'block' : 'none';
+  document.getElementById('btn-champi').classList.toggle('active', type === 'champi');
+  document.getElementById('btn-truffe').classList.toggle('active', type === 'truffe');
 }
 
 function selectDose(el, dose) {
   document.querySelectorAll('.dose-block').forEach(d => d.classList.remove('selected'));
   el.classList.add('selected');
   selectedDose = dose;
-  document.getElementById('heroique-warning').style.display = dose === 'heroique' ? 'block' : 'none';
+  document.getElementById('heroique-warning').style.display = dose === 'champi_heroique' ? 'block' : 'none';
+  document.getElementById('heroique-truffe-warning').style.display = dose === 'truffe_heroique' ? 'block' : 'none';
   updateProgress();
 }
 
@@ -326,27 +401,34 @@ function updateDoseRec() {
   const box = document.getElementById('dose-rec-box');
   if (!exp) { box.style.display = 'none'; return; }
   const msgs = {
-    'Jamais': '🌱 Première fois ? On te recommande la mini-dose (0.5–1g) — assez pour ressentir quelque chose de beau, sans être submergé(e).',
-    '1 à 3 fois': '🌿 Avec quelques expériences, la dose modérée (1.5–2.5g) est souvent le sweet spot — un vrai voyage, mais gérable.',
-    'Régulier': '🍄 Tu connais ton espace intérieur. Choisis ce qui résonne juste pour toi ce jour-là.'
+    'Jamais': '🌱 Première fois ? On te recommande la dose légère — assez pour ressentir quelque chose de beau, sans être submergé(e).',
+    '1 à 3 fois': '🌿 Avec quelques expériences, la dose modérée est souvent le sweet spot — un vrai voyage, mais gérable.',
+    '5 à 10 fois': '🍄 Tu connais ton espace intérieur. Choisis ce qui résonne juste pour toi ce jour-là.'
   };
   document.getElementById('dose-rec-text').textContent = msgs[exp] || '';
   box.style.display = 'block';
 }
 
 function updateProgress() {
+  const intentionVal = Array.isArray(chipSelections['intention']) ? chipSelections['intention'].length > 0 : !!chipSelections['intention'];
   const filled = [
     document.getElementById('f-name').value,
     selectedDose,
     document.getElementById('f-budget').value,
     chipSelections['exp'],
-    chipSelections['intention']
+    intentionVal || null
   ].filter(Boolean).length;
   document.getElementById('progress').style.width = Math.min(100, filled / 5 * 100) + '%';
 }
 
 function getMeds() {
   return Array.from(document.querySelectorAll('.meds-check:checked')).map(c => c.value);
+}
+
+function getChipValue(group) {
+  const val = chipSelections[group];
+  if (Array.isArray(val)) return val.length > 0 ? val.join(', ') : null;
+  return val || null;
 }
 
 async function submitForm() {
@@ -368,14 +450,15 @@ async function submitForm() {
     meds: getMeds(),
     meds_detail: document.getElementById('f-meds-detail').value || null,
     dose: selectedDose,
+    substance: selectedSubstance,
     budget: parseInt(document.getElementById('f-budget').value) || null,
-    intention: chipSelections['intention'] || null,
+    intention: getChipValue('intention'),
     intention_text: document.getElementById('f-intention-text').value || null,
-    env: chipSelections['env'] || null,
+    env: getChipValue('env'),
     env_detail: document.getElementById('f-env-detail').value || null,
-    sound: chipSelections['sound'] || null,
+    sound: getChipValue('sound'),
     sound_detail: document.getElementById('f-sound-detail').value || null,
-    guide: chipSelections['guide'] || null,
+    guide: getChipValue('guide'),
     diet: document.getElementById('f-diet').value || null,
     emergency: document.getElementById('f-emergency').value || null,
     notes: document.getElementById('f-notes').value || null
@@ -415,10 +498,13 @@ function resetForm() {
   document.getElementById('submit-btn').disabled = false;
   document.getElementById('submit-btn').textContent = 'Valider les informations →';
   selectedDose = null;
+  selectedSubstance = 'champi';
   chipSelections = {};
   document.getElementById('dose-rec-box').style.display = 'none';
   document.getElementById('heroique-warning').style.display = 'none';
+  document.getElementById('heroique-truffe-warning').style.display = 'none';
   document.getElementById('progress').style.width = '0%';
+  switchSubstance('champi');
 }
 
 async function adminLogin() {
@@ -440,7 +526,16 @@ async function adminLogin() {
   }
 }
 
-const DOSE_LABELS = { mini: 'Mini-dose (0.5–1g)', modere: 'Modérée (1.5–2.5g)', fort: 'Forte (3–4g)', heroique: 'Héroïque (4.5g+)' };
+const DOSE_LABELS = {
+  champi_leger: '🍄 Légère (1–1.5g)',
+  champi_modere: '🍄 Modérée (2–2.5g)',
+  champi_fort: '🍄 Forte (3–3.5g)',
+  champi_heroique: '🍄 Héroïque (4.5g+)',
+  truffe_leger: '🌰 Légère (5–8g)',
+  truffe_modere: '🌰 Modérée (10–15g)',
+  truffe_fort: '🌰 Forte (16–20g)',
+  truffe_heroique: '🌰 Héroïque (22g+)'
+};
 
 function escapeHtml(str) {
   if (str == null) return '';
@@ -450,7 +545,6 @@ function escapeHtml(str) {
 function renderDashboard() {
   const total = allParticipants.length;
   const meds = allParticipants.filter(p => p.meds && p.meds.length > 0).length;
-  const heroic = allParticipants.filter(p => p.dose === 'heroique').length;
   const budgets = allParticipants.filter(p => p.budget).map(p => p.budget);
   const avgBudget = budgets.length ? Math.round(budgets.reduce((a, b) => a + b, 0) / budgets.length) : 0;
 
@@ -491,13 +585,14 @@ function renderDashboard() {
 
 function exportCSV() {
   if (!allParticipants.length) { alert('Aucune donnée à exporter.'); return; }
-  const h = ['Date','Prénom','Âge','Poids','Expérience','Détail exp','Traitements','Détail médical','Dosage','Budget','Intention','Détail intention','Env','Son','Guide','Régime','Urgence','Notes'];
+  const h = ['Date','Prénom','Âge','Poids','Expérience','Détail exp','Traitements','Détail médical','Substance','Dosage','Budget','Intention','Détail intention','Env','Son','Guide','Régime','Urgence','Notes'];
   const rows = allParticipants.map(p => [
     p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '',
     p.name, p.age, p.weight, p.exp,
     (p.exp_detail||'').replace(/,/g,';'),
-    (p.meds||[]).join(' | '),
+    Array.isArray(p.meds) ? p.meds.join(' | ') : (p.meds||''),
     (p.meds_detail||'').replace(/,/g,';'),
+    p.substance || '',
     DOSE_LABELS[p.dose]||p.dose, p.budget,
     p.intention, (p.intention_text||'').replace(/,/g,';'),
     p.env, p.sound, p.guide, p.diet, p.emergency,
