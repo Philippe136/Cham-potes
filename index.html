@@ -91,6 +91,12 @@ textarea { min-height: 72px; resize: vertical; }
 .progress-bar { height: 3px; background: var(--border-strong); border-radius: 2px; margin-bottom: 22px; overflow: hidden; }
 .progress-fill { height: 100%; background: var(--moss); border-radius: 2px; transition: width 0.4s ease; }
 .error-msg { color: #c0392b; font-size: 13px; text-align: center; margin-top: 10px; }
+.edu-banner { display: flex; align-items: center; gap: 14px; background: var(--cream-dark); border: 1px solid var(--border-strong); border-radius: 12px; padding: 14px 16px; margin-bottom: 22px; text-decoration: none; transition: background 0.2s, border-color 0.2s; }
+.edu-banner:hover { background: #e3dccb; border-color: var(--moss); }
+.edu-banner-icon { font-size: 28px; flex-shrink: 0; }
+.edu-banner-text { display: flex; flex-direction: column; gap: 2px; }
+.edu-banner-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; color: var(--moss); }
+.edu-banner-sub { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
 </style>
 </head>
 <body>
@@ -109,6 +115,14 @@ textarea { min-height: 72px; resize: vertical; }
       </div>
       <div class="form-body">
         <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+        <a href="https://champignons-hallucinogenes.vercel.app" target="_blank" class="edu-banner">
+          <span class="edu-banner-icon">📚</span>
+          <div class="edu-banner-text">
+            <div class="edu-banner-title">Nouveau sur le sujet ?</div>
+            <div class="edu-banner-sub">Consulte notre guide complet avant de remplir le formulaire →</div>
+          </div>
+        </a>
 
         <div class="section-label">Qui t'es ?</div>
         <div class="field">
