@@ -21,7 +21,7 @@ export default async function handler(req, res) {
            guide, diet, emergency, notes)
         VALUES
           (${d.name}, ${d.age}, ${d.weight}, ${d.exp}, ${d.exp_detail},
-           ${d.meds}, ${d.meds_detail}, ${d.dose}, ${d.budget},
+           ${Array.isArray(d.meds) ? d.meds.join(', ') : (d.meds || '')}, ${d.meds_detail}, ${d.dose}, ${d.budget},
            ${d.intention}, ${d.intention_text}, ${d.env}, ${d.env_detail},
            ${d.sound}, ${d.sound_detail}, ${d.guide}, ${d.diet},
            ${d.emergency}, ${d.notes})
