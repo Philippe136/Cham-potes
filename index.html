@@ -140,6 +140,24 @@ textarea { min-height: 72px; resize: vertical; }
           </div>
         </div>
 
+        <div class="section-label">Ton rapport aux champi</div>
+        <div class="field">
+          <label>Comment tu vois les champignons psy en ce moment ?</label>
+          <div class="chip-group" id="chips-perception" style="margin-bottom:10px">
+            <span class="chip" onclick="toggleChip(this,'perception')">Curieux·se mais j'ai des doutes</span>
+            <span class="chip" onclick="toggleChip(this,'perception')">J'ai peur de perdre le contrôle</span>
+            <span class="chip" onclick="toggleChip(this,'perception')">Je pense que c'est dangereux</span>
+            <span class="chip" onclick="toggleChip(this,'perception')">C'est une démarche spirituelle pour moi</span>
+            <span class="chip" onclick="toggleChip(this,'perception')">Je veux juste explorer</span>
+            <span class="chip" onclick="toggleChip(this,'perception')">J'y crois pour la thérapie / le soin</span>
+            <span class="chip" onclick="toggleChip(this,'perception')">J'ai des préjugés que je veux dépasser</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Ce que tu te poses comme questions, tes freins, tes idées reçues (optionnel)</label>
+          <textarea id="f-perception-text" placeholder="Dis-nous ce qui te traverse sur le sujet…"></textarea>
+        </div>
+
         <div class="section-label">Ton expérience</div>
         <div class="field">
           <label>Expérience psychédélique (truffes, LSD, champi…)</label>
@@ -150,16 +168,17 @@ textarea { min-height: 72px; resize: vertical; }
           </div>
         </div>
         <div class="field">
-          <label>Détails sur ton expérience (optionnel)</label>
+          <label>Détails sur ton expérience (bonne, mauvaise et pourquoi)</label>
           <textarea id="f-exp-detail" placeholder=""></textarea>
         </div>
 
         <div class="field">
           <label>Traitements / contre-indications</label>
+          <div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;line-height:1.5">Ce sont les principales interactions connues. Coche tout ce qui te concerne.</div>
           <div class="check-group">
             <label class="check-label"><input type="checkbox" class="meds-check" value="ISRS / antidépresseurs (Prozac, Zoloft…)"> ISRS / antidépresseurs (Prozac, Zoloft…)</label>
-            <label class="check-label"><input type="checkbox" class="meds-check" value="IMAO (Nardil, Parnate) — interaction sérieuse"> IMAO (Nardil, Parnate) — interaction sérieuse</label>
-            <label class="check-label"><input type="checkbox" class="meds-check" value="Lithium / stabilisateurs de l'humeur"> Lithium / stabilisateurs de l'humeur</label>
+            <label class="check-label"><input type="checkbox" class="meds-check" value="IMAO (Nardil, Parnate)"> <span>IMAO (Nardil, Parnate) <strong style="color:#c0392b">⚠ risque sérieux</strong></span></label>
+            <label class="check-label"><input type="checkbox" class="meds-check" value="Lithium / stabilisateurs de l'humeur"> <span>Lithium / stabilisateurs de l'humeur <strong style="color:#c0392b">⚠ risque sérieux</strong></span></label>
             <label class="check-label"><input type="checkbox" class="meds-check" value="Antipsychotiques / neuroleptiques"> Antipsychotiques / neuroleptiques</label>
             <label class="check-label"><input type="checkbox" class="meds-check" value="Anxiolytiques / benzodiazépines"> Anxiolytiques / benzodiazépines</label>
             <label class="check-label"><input type="checkbox" class="meds-check" value="Antécédents psy (psychose, bipolarité…)"> Antécédents psy (psychose, bipolarité…)</label>
@@ -467,6 +486,8 @@ async function submitForm() {
     guide: getChipValue('guide'),
     diet: document.getElementById('f-diet').value || null,
     emergency: document.getElementById('f-emergency').value || null,
+    perception: getChipValue('perception'),
+    perception_text: document.getElementById('f-perception-text').value || null,
     notes: document.getElementById('f-notes').value || null
   };
 
@@ -579,6 +600,7 @@ function renderDashboard() {
       ${p.exp_detail ? '<div class="p-notes-green">Expérience : '+escapeHtml(p.exp_detail)+'</div>' : ''}
       ${p.env_detail ? '<div class="p-notes-green">Environnement : '+escapeHtml(p.env_detail)+'</div>' : ''}
       ${p.sound_detail ? '<div class="p-notes-green">Son : '+escapeHtml(p.sound_detail)+'</div>' : ''}
+      ${p.perception ? '<div class="p-notes-green">🧠 Perception : '+escapeHtml(p.perception)+(p.perception_text ? ' — '+escapeHtml(p.perception_text) : '')+'</div>' : ''}
       ${p.intention_text ? '<div class="p-notes-green">'+escapeHtml(p.intention_text)+'</div>' : ''}
       ${p.notes ? '<div class="p-notes">'+escapeHtml(p.notes)+'</div>' : ''}
       <div class="p-detail" style="margin-top:8px;font-size:11px;color:var(--text-soft)">Urgence : ${escapeHtml(p.emergency || '–')} · ${escapeHtml(date)}</div>
